@@ -1,0 +1,63 @@
+{% extends 'bash.html' %}
+{% load static %}
+{% block content %}
+<section class="s-content" style="background-color: SlateBlue ;" >
+
+    <div class="row">
+        <div class="column large-12">
+
+            <article class="s-content__entry">
+
+
+                <div class="s-content__primary">
+
+                    <div class="s-content__page-content">
+                        <div class="row block-large-1-2 block-tab-full s-content__blocks">
+                            <h3 style="color: white;">You can Upload your Blog here...</h3>
+                        </div> <!-- end s-content__blocks -->
+
+                        <form name="cForm" id="cForm" class="s-content__form" method="post" enctype = "multipart/form-data">
+                            
+                            {% csrf_token %}
+
+                                <div class="form-field">
+                                    <input name="title" type="text" id="title" class="h-full-width h-remove-bottom" placeholder="Your Title" >
+                                </div>
+
+                                <div class="form-field">
+                                    <input name="category" type="text" id="category" class="h-full-width h-remove-bottom" placeholder="Your Category"  >
+                                </div>
+
+                                <div class="form-field">
+                                    <input name="entryTxt" type="text" id="entryTxt" class="h-full-width h-remove-bottom" placeholder="Your Entry Text" >
+                                </div>
+
+                                <div class="message form-field">
+                                    <textarea name="Desc" id="mytextarea" class="h-full-width" placeholder="Your Description" ></textarea>
+                                </div>
+
+                                <div class="form-field">
+                                    <input name="keyword" type="text" id="keyword" class="h-full-width h-remove-bottom" placeholder="Your Keywords"  >
+                                </div>
+                                <br>
+                                <div class="form-field">
+                                    <label style="color: white;">Choose Your Image</label>
+                                    <input name="Uploadimage" type="file" id="Uploadimage"  >
+                                </div>
+
+                                <br>
+                                <button type="submit" class="submit btn btn--primary h-full-width" >Submit</button>
+
+                            
+                        </form> <!-- end form -->
+
+                    </div> <!-- end s-entry__page-content -->
+
+                </div> <!-- end s-content__primary -->
+            </article> <!-- end entry -->
+
+        </div> <!-- end column -->
+    </div> <!-- end row -->
+
+</section> <!-- end s-content -->
+{% endblock %}

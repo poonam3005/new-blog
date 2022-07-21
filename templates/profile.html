@@ -1,0 +1,61 @@
+{% extends 'bash.html' %}
+{% load static %}
+{% block content %}
+
+<section class="s-content s-content--no-top-padding">
+
+
+    <!-- masonry
+    ================================================== -->
+    <div class="s-bricks">
+        
+        <div class="masonry">
+            <div class="bricks-wrapper h-group">
+
+                <div class="grid-sizer"></div>
+                
+                {% for blog in profile %}
+                <article class="brick entry" data-aos="fade-up">
+
+                    <div class="entry__thumb">
+                        <a href="{% url 'selected_blog' id=blog.id %}" class="thumb-link">
+                            <img src="{{blog.image.url}}" alt="Blog Image">
+                        </a>
+                    </div> <!-- end entry__thumb -->
+
+                    <div class="entry__text">
+                        <div class="entry__header">
+                            <h1 class="entry__title"><a href="{% url 'selected_blog' id=blog.id %}">{{blog.title}}</a></h1>
+                            
+                            <div class="entry__meta">
+                                <span class="byline">By:
+                                    <span class='author'>
+                                        <a>{{blog.author}}</a>
+                                </span>
+                            </span>
+                                <span class="cat-links">
+                                    <p>{{blog.keyword}}</p>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="entry__excerpt">
+                            <p>{{blog.entryTxt}}</p>
+                        </div>
+                        <a class="entry__more-link" href="{% url 'edit_blog' id=blog.id %}"><button>Edit</button></a>
+                        <a class="entry__more-link" href="{% url 'delete_blog' id=blog.id %}"><button>Delete</button></a>
+                        
+                    </div> <!-- end entry__text -->
+                
+                </article> <!-- end article -->
+                {% endfor %}
+
+                
+            </div> <!-- end brick-wrapper -->
+
+        </div> <!-- end masonry -->
+
+        
+    </div> <!-- end s-bricks -->
+
+</section> <!-- end s-content -->
+{% endblock %}
