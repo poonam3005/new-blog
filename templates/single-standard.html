@@ -1,0 +1,196 @@
+{% extends 'bash.html' %}
+{% load static %}
+{% block content %}
+<section class="s-content">
+
+    <div class="row">
+        <div class="column large-12">
+
+            <article class="s-content__entry format-standard">
+
+                <div class="s-content__media">
+                    <div class="s-content__post-thumb">
+                        <img src="{{fullblog.image.url}}" sizes="(max-width:2100px) 100vw, 2100px">
+                    </div>
+                </div> <!-- end s-content__media -->
+
+                <div class="s-content__entry-header">
+                    <h1 class="s-content__title s-content__title--post">{{fullblog.title}}</h1>
+                </div> <!-- end s-content__entry-header -->
+
+                <div class="s-content__primary">
+
+                    <div class="s-content__entry-content">
+
+                        <p class="lead">{{fullblog.Desc}}</p> 
+                        <form method="post" action="{% url 'like_blog' fullblog.id %}">
+                            {% csrf_token %}
+
+                            {% if liked %}
+                            <button type="submit" name="post_id" value="{{fullblog.id}}" style="background-color: pink;">UnLike</button>
+                            {% else %}
+                            <button type="submit" name="post_id" value="{{fullblog.id}}">Like</button> 
+                            {% endif %}
+                            
+                            {{total_likes}}
+        
+                        </form>
+                    </div> <!-- end s-entry__entry-content -->
+
+                    <div class="s-content__entry-meta">
+
+                        <div class="entry-author meta-blk">
+                            <div class="author-avatar">
+                                <img class="avatar" src="{% static 'images/avatars/user-06.jpg' %}" alt="">
+                            </div>
+                            <div class="byline">
+                                <span class="bytext">Posted By</span>
+                                <p>{{fullblog.author}}</p>
+                            </div>
+                        </div>
+
+                        <div class="meta-bottom">
+                            
+                            <div class="entry-cat-links meta-blk">
+                                
+                                <span>On</span>
+                                {{fullblog.date}}
+                            </div>
+                            <div class="entry-cat-links meta-blk">
+                                <span>Likes</span>
+                                {{total_likes}}
+                            </div>
+
+                            <div class="entry-tags meta-blk">
+                                <span class="tagtext">Tags</span>
+                                <p>{{fullblog.keyword}}</p>
+                            </div>
+                            
+                        </div>
+
+                    </div> <!-- s-content__entry-meta -->
+
+
+                </div> <!-- end s-content__primary -->
+            </article> <!-- end entry -->
+
+        </div> <!-- end column -->
+    </div> <!-- end row -->
+
+
+    <!-- comments
+    ================================================== -->
+    <div class="comments-wrap">
+
+        <div id="comments" class="row">
+            <div class="column large-12">
+                <!-- START commentlist -->
+                <ol class="commentlist">
+
+                    <li class="depth-1 comment">
+                        {% for comment in fullblog.comments.all %}
+                        
+                        <div class="comment__avatar">
+                            <img class="avatar" src="{% static 'images/avatars/user-01.jpg' %}" alt="" width="50" height="50">
+                        </div>
+
+                        <div class="comment__content">
+
+                            <div class="comment__info">
+                                <div class="comment__author">{{comment.name}}</div>
+
+                                <div class="comment__meta">
+                                    <div class="comment__time">{{comment.date_added}}</div>
+
+                                    {% for reply in comment.replycomment_set.all %}
+                                    <div>
+                                        <div class="fw-bold"><small><b>Name {{ reply.replier_name }}</b></small></div>
+                                        <div style="font-size: 10px;">date {{ reply.replied_date }}</div>
+                                        <small>Reply comment {{ reply.content }}</small><br>
+                                        </div>
+                                    {% endfor %}
+
+                                    
+
+
+
+
+                                </div>
+
+
+                            </div>
+                            <div class="container">
+                                {% comment %} <a type="text" data-toggle="collapse" data-target="#reply{{comment.id}}" style="float: right;" href="">Reply</a><br> {% endcomment %}
+                                {% if replies %}
+                                 {% for reply in replies %}
+                                   <div>
+                                     <div class="fw-bold"><small><b>Name</b></small></div>
+                                     <div style="font-size: 10px;">date</div>
+                                     <small>Reply comment</small><br>
+                                     </div>
+                                  {% endfor %}
+                                 {% endif %}
+                             
+                               <div id="replyComment{{comment.id}}" class="collapse in">
+                                  <form method="post" action="replyComment/{{comment.id}}">
+                                     {% csrf_token %}
+                                       <input name="replier_name" class="form-control form-control-sm" type="hidden">
+                                       <input name="reply_content" class="form-control form-control-lg" type="text" placeholder="Reply comment">
+                                       <button type="submit" class="btn btn-primary" style="float: right; margin-top: 5px;">Reply</button>
+                             
+                                   </form>
+                                </div>
+                            <div class="comment__text"><p>{{comment.body}}</p></div>
+                        {% endfor %}
+                        </div>
+
+                    </li> <!-- end comment level 1 -->
+                </ol>
+                <!-- END commentlist -->
+
+            </div> <!-- end col-full -->
+        </div> <!-- end comments -->
+
+
+        <div class="row comment-respond">
+
+            <!-- START respond -->
+            <div id="respond" class="column">
+
+                <h3>Add Comment </h3>
+
+                <form name="contactForm" id="contactForm" method="post"  >
+                    {% csrf_token %} 
+                        <div class="message form-field">
+                            <input name="comment" type="text" id="comment" class="h-full-width" placeholder="Your Comment">
+                        </div>
+                        <input name="submit" id="submit" class="btn btn--primary btn-wide btn--large h-full-width" value="Add Comment" type="submit">
+
+                </form> <!-- end form -->
+
+            </div>
+            <!-- END respond-->
+
+        </div> <!-- end comment-respond -->
+
+    </div> <!-- end comments-wrap -->
+
+
+</section> <!-- end s-content -->
+
+
+<!-- footer
+================================================== -->
+<footer class="s-footer">
+
+    <div class="s-footer__bottom">
+
+        <div class="ss-go-top">
+            <a class="smoothscroll" title="Back to Top" href="#top">
+                <svg viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" width="15" height="15"><path d="M7.5 1.5l.354-.354L7.5.793l-.354.353.354.354zm-.354.354l4 4 .708-.708-4-4-.708.708zm0-.708l-4 4 .708.708 4-4-.708-.708zM7 1.5V14h1V1.5H7z" fill="currentColor"></path></svg>
+            </a>
+        </div> <!-- end ss-go-top -->
+    </div> <!-- end s-footer__bottom -->
+
+</footer> <!-- end s-footer -->
+{% endblock %}
