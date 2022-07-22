@@ -14,9 +14,11 @@ class Calendar(HTMLCalendar):
     # filter events by day
     def formatday(self, day, posts):
         posts_per_day = posts.filter(date__day=day)
-        d = ''
+        d = 0
+        
         for event in posts_per_day:
-            d += f'<li> {event.title} </li>'
+            d+=1
+            # d += f'<li> {event.title} </li>'
 
         if day != 0:
             # print(date.today())
