@@ -1,0 +1,18 @@
+{% extends 'bash.html' %}
+
+{% block content %}
+
+<section class="s-content s-content--no-top-padding">
+<br><br><br><br>
+<div class="s-content__media">
+    <div class="s-content__post-thumb">
+        <a href="{% url 'calendar' %}?{{ prev_month }}"> Previous Month </a>
+        <a href="{% url 'calendar' %}?{{ next_month }}"> Next Month </a>
+        {{ calendar|safe }}
+    </div>
+</div>
+                
+                
+</section> <!-- end s-content -->
+
+{% endblock %}

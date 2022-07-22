@@ -1,3 +1,4 @@
+from pyexpat import model
 from unicodedata import name
 from .import views
 from django.urls import path
@@ -15,5 +16,6 @@ urlpatterns = [
     path('private/<int:id>',views.private,name='private'),
     path('edit_blog/<int:id>',views.edit_blog,name='edit_blog'),
     path('delete_blog/<int:id>',views.delete_blog,name='delete_blog'),
-    path('category/<str:cat>',views.category,name='category')
+    path('category/<str:cat>',views.category,name='category'),
+    path('calendar',  views.CalendarView.as_view(), name='calendar'),
 ]
