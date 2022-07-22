@@ -2,7 +2,7 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.contrib.auth.forms import UserCreationForm
 from .forms import CreateUserForm
-from .models import Blog,Title,Category,Comment
+from .models import Blog,Title,Category,Comment, ReplyComment
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
@@ -20,16 +20,24 @@ def index(request):
 def selected_blog(request,id):
     fullblog = Blog.objects.get(id=id)
     total_likes = fullblog.total_likes()
+    reply = ReplyComment.objects.all()
 
     liked = False
     if fullblog.likes.filter(id=request.user.id).exists():
         liked=True
+    
     if request.method =='POST':
         comment = request.POST['comment']
-        Comment.objects.create(post=fullblog,name = request.user,body=comment)
-        print(comment)
+        parentid = request.POST.get('parent',"")
+        if parentid=="":
+            Comment.objects.create(post=fullblog,name = request.user,body=comment)
+            print("comment")
+        else:
+            parent = Comment.objects.get(id=parentid)
+            ReplyComment.objects.create(post=fullblog,name = request.user,body=comment,parent=parent)
+            print('reply')
         return HttpResponseRedirect(request.path_info)
-    return render(request,'single-standard.html',{'fullblog':fullblog,'total_likes':total_likes,'liked':liked})
+    return render(request,'single-standard.html',{'fullblog':fullblog,'total_likes':total_likes,'liked':liked,'replyComment':reply})
 
 # Like blog
 

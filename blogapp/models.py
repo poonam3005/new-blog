@@ -41,3 +41,13 @@ class Comment(models.Model):
 
     def __str__(self):
         return '%s-%s-%s' % (self.id,self.post.title,self.name)
+
+class ReplyComment(models.Model):
+    parent = models.ForeignKey(Comment,related_name='parent',on_delete=models.CASCADE)
+    post = models.ForeignKey(Blog,related_name='reply',on_delete=models.CASCADE)
+    name = models.ForeignKey(User,  on_delete=models.CASCADE)
+    body = models.TextField()
+    date_added = models.DateField(auto_now=True)
+
+    def __str__(self):
+        return '%s-%s reply by %s' % (self.id,self.post.title,self.name)
