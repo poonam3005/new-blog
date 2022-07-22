@@ -9,11 +9,21 @@ from django.db.models import Q
 # Create your views here.
 
 def index(request):
-    bloglist=Blog.objects.all()
+    bloglist=Blog.objects.filter(private=False)
     category = Category.objects.all()
     print(request.user,"loged in")
     return render(request,'index.html',{'bloglist':bloglist,'category':category})
     
+# privet or public
+def private(request,id):
+    blog = Blog.objects.get(id=id)
+    if blog.private is True:
+        blog.private = False
+        blog.save()
+    else:
+        blog.private = True
+        blog.save()
+    return redirect('profile')
 
 # Selected Bolg
 

@@ -12,6 +12,7 @@ urlpatterns = [
     path('search',views.search,name='search'),
     path('like_blog/<int:id>',views.like_blog,name='like_blog'),
     path('profile',views.profile,name='profile'),
+    path('private/<int:id>',views.private,name='private'),
     path('edit_blog/<int:id>',views.edit_blog,name='edit_blog'),
     path('delete_blog/<int:id>',views.delete_blog,name='delete_blog'),
     path('category/<str:cat>',views.category,name='category')
