@@ -1,3 +1,5 @@
+from pyexpat import model
+from unicodedata import name
 from .import views
 from django.urls import path
 
@@ -11,13 +13,9 @@ urlpatterns = [
     path('search',views.search,name='search'),
     path('like_blog/<int:id>',views.like_blog,name='like_blog'),
     path('profile',views.profile,name='profile'),
+    path('private/<int:id>',views.private,name='private'),
     path('edit_blog/<int:id>',views.edit_blog,name='edit_blog'),
     path('delete_blog/<int:id>',views.delete_blog,name='delete_blog'),
-
-    path('replyComment/<str:pk>/', views.replyComment, name='replyComment'),      
-
-
-    path('make_private/<int:id>', views.make_private, name='make_private'),
-    path('make_public/<int:id>', views.make_public, name='make_public'),
-
+    path('category/<str:cat>',views.category,name='category'),
+    path('calendar',  views.CalendarView.as_view(), name='calendar'),
 ]

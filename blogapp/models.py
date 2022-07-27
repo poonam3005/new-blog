@@ -27,29 +27,27 @@ class Blog(models.Model):
     date = models.DateField( auto_now=True)
     likes = models.ManyToManyField(User, related_name='blog_post')
     private = models.BooleanField(default=False, null=True)
-    
     def total_likes(self):
         return self.likes.count()
 
     def __str__(self) :
-        return str(self.id)
+        return '%s by %s' % (self.id,self.author)
 
 class Comment(models.Model):
     post = models.ForeignKey(Blog,related_name='comments',on_delete=models.CASCADE)
     name = models.ForeignKey(User,  on_delete=models.CASCADE)
-    body = models.TextField( blank=True, default=True,null=True)
+    body = models.TextField()
     date_added = models.DateField(auto_now=True)
-
-    # reply = models.ForeignKey('Comment', related_name='replies', on_delete=models.CASCADE)
 
     def __str__(self):
         return '%s-%s-%s' % (self.id,self.post.title,self.name)
 
 class ReplyComment(models.Model):
-   reply_comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='replies' ,blank=True,null=True)
-   replier_name = models.ForeignKey(User, on_delete=models.CASCADE,blank=True,null=True)
-   reply_content = models.TextField(blank=True,null=True)
-   replied_date = models.DateTimeField(auto_now_add=True,blank=True,null=True)
+    parent = models.ForeignKey(Comment,related_name='parent',on_delete=models.CASCADE)
+    post = models.ForeignKey(Blog,related_name='reply',on_delete=models.CASCADE)
+    name = models.ForeignKey(User,  on_delete=models.CASCADE)
+    body = models.TextField()
+    date_added = models.DateField(auto_now=True)
 
-   def __str__(self):
-       return "'{}' replied with '{}' to '{}'".format(self.replier_name,self.reply_content, self.reply_comment)
+    def __str__(self):
+        return '%s-%s reply by %s' % (self.id,self.post.title,self.name)

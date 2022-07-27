@@ -25,8 +25,8 @@
 
                     <div class="entry__text">
                         <div class="entry__header">
-                            <h1 class="entry__title"><a href="{% url 'selected_blog' id=blog.id %}">{{blog.title}}</a></h1>
-                            
+                            <h1 class="entry__title"><a href="{% url 'selected_blog' id=blog.id %}">Title: {{blog.title}}</a></h1>
+                            <h3 class="entry__title">Category: {{blog.category}}</h3>
                             <div class="entry__meta">
                                 <span class="byline">By:
                                     <span class='author'>
@@ -34,7 +34,7 @@
                                 </span>
                             </span>
                                 <span class="cat-links">
-                                    <p>{{blog.keyword}}</p>
+                                    <p>Keyword: {{blog.keyword}}</p>
                                 </span>
                             </div>
                         </div>

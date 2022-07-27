@@ -38,66 +38,41 @@
 
     <!-- header
     ================================================== -->
-    <header class="s-header" style="background-color: black; ">
+    <header class="s-header" style="background-color: SlateBlue;">
 
         <div class="s-header__logo">
-            {% comment %} <a class="logo" href="{% url 'profile' %}">
-Profile                <!-- <img src="{% static 'images/logo.png' %}" alt="Homepage"> -->
-            </a> {% endcomment %}
-            {% comment %} <li class="current"><a href="{% url 'profile' %}" title="">Profile</a></li> {% endcomment %}
+            <a class="logo" href="{% url 'profile' %}">
+                <img src="https://img.icons8.com/ios-glyphs/30/000000/test-account.png"/>
+                <!-- <img src="{% static 'images/logo.png' %}" alt="Homepage"> -->
+            </a>
+           
         </div>
        
-        <div class="row s-header__navigation" style="left:150px ;">
+        <div class="row s-header__navigation">
 
             <nav class="s-header__nav-wrap">
 
                 <h3 class="s-header__nav-heading h6">Navigate to</h3>
 
-                <ul class="s-header__nav" >
-                   
-
-                    <li><a href="{% url 'index' %}" title="">Home</a></li>
-                    
-
-
-                    <li><a href="{% url 'upload-blog' %}" title="">Upload Blog</a></li>
-
-                    <li><a href="{% url 'profile' %}" title="">Profile</a></li>
-
-                    {% if request.user.is_authenticated %}
-                    <li class="nav-item">              
-                      <a class="nav-link" href="">{{request.user}}</a>
-                      </li>
-                     
-                     <li class="nav-item">              
-                          <a class="nav-link" href="/logout">Logout</a>
-                      </li>
-                      {% else %}
-                     
-                      <li class="nav-item" >
-                       <a href="/login" class="nav-link ">Login</a>
-                      </li>
-          
-                      <li class="nav-item mx-2">
-                       <a href="/registration" class="nav-link ">Registration</a>
-                      </li>
-          
-          
-                    {% endif %}
-
-
-
-
-
-
+                <ul class="s-header__nav">
+                    <li class="current"><a href="{% url 'index' %}" title="">Home</a></li>
+                    <li class="has-children">
+                        <a href="" title="">Categories</a>
+                        <ul class="sub-menu">
+                            {% for c in category %}
+                            <li><a href="{% url 'category' cat=c %}">{{c}}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
                                        
-                    
-                    {% comment %} {% if user.is_authenticated %}
+                    <li><a href="{% url 'upload-blog' %}" title="">Upload Blog</a></li>
+                    <li><a href="{% url 'calendar' %}" title="">Calender</a></li>
+                    {% if user.is_authenticated %}
                     <li><a href="{% url 'logout' %}" title="">Logout</a></li>
                     {% else %}
                     <li><a href="registration" title="">Sign-Up</a></li>
                     <li><a href="{% url 'login' %}" title="">Sign-In</a></li>
-                    {% endif %} {% endcomment %}
+                    {% endif %}
                 </ul> <!-- end s-header__nav -->
                 
 

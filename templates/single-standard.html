@@ -91,7 +91,7 @@
                         {% for comment in fullblog.comments.all %}
                         
                         <div class="comment__avatar">
-                            <img class="avatar" src="{% static 'images/avatars/user-01.jpg' %}" alt="" width="50" height="50">
+                            <img class="avatar" src="https://img.icons8.com/office/70/000000/user.png" alt="" width="50" height="50">
                         </div>
 
                         <div class="comment__content">
@@ -101,49 +101,53 @@
 
                                 <div class="comment__meta">
                                     <div class="comment__time">{{comment.date_added}}</div>
-
-                                    {% for reply in comment.replycomment_set.all %}
-                                    <div>
-                                        <div class="fw-bold"><small><b>Name {{ reply.replier_name }}</b></small></div>
-                                        <div style="font-size: 10px;">date {{ reply.replied_date }}</div>
-                                        <small>Reply comment {{ reply.content }}</small><br>
-                                        </div>
-                                    {% endfor %}
-
-                                    
-
-
-
-
+                                    <div class="comment__reply">
+                                        <!-- <a class="comment-reply-link" href="#0">Reply</a> -->
+                                        
+                                    </div>
                                 </div>
-
-
                             </div>
-                            <div class="container">
-                                {% comment %} <a type="text" data-toggle="collapse" data-target="#reply{{comment.id}}" style="float: right;" href="">Reply</a><br> {% endcomment %}
-                                {% if replies %}
-                                 {% for reply in replies %}
-                                   <div>
-                                     <div class="fw-bold"><small><b>Name</b></small></div>
-                                     <div style="font-size: 10px;">date</div>
-                                     <small>Reply comment</small><br>
-                                     </div>
-                                  {% endfor %}
-                                 {% endif %}
-                             
-                               <div id="replyComment{{comment.id}}" class="collapse in">
-                                  <form method="post" action="replyComment/{{comment.id}}">
-                                     {% csrf_token %}
-                                       <input name="replier_name" class="form-control form-control-sm" type="hidden">
-                                       <input name="reply_content" class="form-control form-control-lg" type="text" placeholder="Reply comment">
-                                       <button type="submit" class="btn btn-primary" style="float: right; margin-top: 5px;">Reply</button>
-                             
-                                   </form>
-                                </div>
                             <div class="comment__text"><p>{{comment.body}}</p></div>
-                        {% endfor %}
+                            
+                        {% for reply in replyComment %}
+                        {% if reply.parent.id == comment.id %}
+                           
+                        <ul class="children">
+                            <li class="depth-2 comment">
+                                <div class="comment__avatar">
+                                    <img class="avatar" src="https://img.icons8.com/office/70/000000/user.png" alt="" width="50" height="50">
+                                </div>
+        
+                                <div class="comment__content">
+        
+                                    <div class="comment__info">
+                                        <div class="comment__author">{{reply.name}}</div>
+        
+                                        <div class="comment__meta">
+                                            <div class="comment__time">{{reply.date_added}}</div>
+                                            
+                                        </div>
+                                    </div>
+        
+                                <div class="comment__text"><p>{{reply.body}}</p></div>
+                            </li>
+                        </ul>
+                        {% endif %}
+                        {% endfor %} 
+                        <div class="comment__text">
+                            <form name="contactForm" id="contactForm" method="post" >
+                                {% csrf_token %} 
+                                    <div class="message form-field">
+                                        <input name="comment" type="text" id="comment" class="h-full-width" placeholder="Your Reply">
+                                        <input name="submit" id="submit" value="Reply" type="submit">
+                                        <input name="parent" type="hidden" value="{{comment.id}}">
+                                    </div>
+                            </form>
+                        </div>
+                           
                         </div>
 
+                        {% endfor %}
                     </li> <!-- end comment level 1 -->
                 </ol>
                 <!-- END commentlist -->

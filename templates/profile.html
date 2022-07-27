@@ -43,15 +43,11 @@
                         </div>
                         <a class="entry__more-link" href="{% url 'edit_blog' id=blog.id %}"><button>Edit</button></a>
                         <a class="entry__more-link" href="{% url 'delete_blog' id=blog.id %}"><button>Delete</button></a>
-                        
-                        {% if not blog.private %}
-                        <a class="btn btn-info btn-sm mt-1 mb-1 float-right mr-2 "
-                            href="{% url 'make_private' blog.id %}">Private</a>
-                    {% else %}
-                        <a class="btn btn-info btn-sm mt-1 mb-1 float-right mr-2 "
-                            href="{% url 'make_public' blog.id %}">Public</a>
-                    {% endif %}
-
+                        {% if blog.private %}
+                        <a class="entry__more-link" style="background-color: red;" href="{% url 'private' id=blog.id %}"><button>Make Public</button></a>
+                        {% else %}
+                        <a class="entry__more-link"  href="{% url 'private' id=blog.id %}"><button>Make Private</button></a>
+                        {% endif %}
                     </div> <!-- end entry__text -->
                 
                 </article> <!-- end article -->

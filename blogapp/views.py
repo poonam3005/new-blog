@@ -1,42 +1,107 @@
+from datetime import date, datetime, timedelta
 from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.contrib.auth.forms import UserCreationForm
-from flask_login import login_required
+from django.contrib.auth.decorators import login_required
 from .forms import CreateUserForm
-from .models import Blog, ReplyComment,Title,Category,Comment
+from .models import Blog,Title,Category,Comment, ReplyComment
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
-# Create your views here.
+from calendar import HTMLCalendar
+import calendar
+from .utils import Calendar
+from django.views.generic import ListView
+from django.utils.safestring import mark_safe
 
 def index(request):
-    bloglist=Blog.objects.all()
+    bloglist=Blog.objects.filter(private=False)
     category = Category.objects.all()
     print(request.user,"loged in")
     return render(request,'index.html',{'bloglist':bloglist,'category':category})
-    
 
+# privet or public
+@login_required
+def private(request,id):
+    blog = Blog.objects.get(id=id)
+    if blog.private is True:
+        blog.private = False
+        blog.save()
+    else:
+        blog.private = True
+        blog.save()
+    return redirect('profile')
+
+# Calender
+class CalendarView(ListView):
+    model = Blog
+    template_name = 'calender.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # use today's date for the calendar
+        d = get_date(self.request.GET.get('month', None))
+
+        # Instantiate our calendar class with today's year and date
+        cal = Calendar(d, d.year, d.month)
+
+        # Call the formatmonth method, which returns our calendar as a table
+        html_cal = cal.formatmonth()
+        context['calendar'] = mark_safe(html_cal)
+        context['prev_month'] = prev_month(d)
+        context['next_month'] = next_month(d)
+        return context
+
+def get_date(req_day):
+    if req_day:
+        year, month = (int(x) for x in req_day.split('-'))
+        return date(year, month, day=1)
+    return datetime.today()
+
+def prev_month(d):
+    first = d.replace(day=1)
+    prev_month = first - timedelta(days=1)
+    month = 'month=' + str(prev_month.year) + '-' + str(prev_month.month)
+    return month
+
+def next_month(d):
+    days_in_month = calendar.monthrange(d.year, d.month)[1]
+    last = d.replace(day=days_in_month)
+    next_month = last + timedelta(days=1)
+    month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
+    return month
+
+
+# def calendar(request):
+#     calendar = HTMLCalendar().formatmonth(2022,6)
+#     return render(request,'calender.html',{'calendar':calendar})
 # Selected Bolg
 
 def selected_blog(request,id):
     fullblog = Blog.objects.get(id=id)
     total_likes = fullblog.total_likes()
+    reply = ReplyComment.objects.all()
 
     liked = False
     if fullblog.likes.filter(id=request.user.id).exists():
         liked=True
+    
     if request.method =='POST':
-        comment = request.POST.get('comment')
-        Comment.objects.create(post=fullblog,name = request.user,body=comment)
-        print(comment)
-
-       
-
+        comment = request.POST['comment']
+        parentid = request.POST.get('parent',"")
+        if parentid=="":
+            Comment.objects.create(post=fullblog,name = request.user,body=comment)
+            print("comment")
+        else:
+            parent = Comment.objects.get(id=parentid)
+            ReplyComment.objects.create(post=fullblog,name = request.user,body=comment,parent=parent)
+            print('reply')
         return HttpResponseRedirect(request.path_info)
-    return render(request,'single-standard.html',{'fullblog':fullblog,'total_likes':total_likes,'liked':liked})
+    return render(request,'single-standard.html',{'fullblog':fullblog,'total_likes':total_likes,'liked':liked,'replyComment':reply})
 
 # Like blog
-
+@login_required
 def like_blog(request,id):
     if request.method == 'POST':
         post_id = request.POST['post_id']
@@ -52,6 +117,16 @@ def like_blog(request,id):
         return redirect('selected_blog',id)
         # return HttpResponseRedirect(reverse('selected_blog',args=[str(id)]))
 
+# category
+def category(request,cat):
+    category = Category.objects.all()
+    cat_id = Category.objects.get(category=cat)
+    bloglist = Blog.objects.filter(category=cat_id.id)
+
+    # return HttpResponse("hello  "+cat)
+    return render(request,'category.html',{'bloglist':bloglist,'category':category})
+
+
 # Search Button
 
 def search(request):
@@ -62,13 +137,10 @@ def search(request):
     return render(request,'index.html',{'bloglist':search})
 
 #Edit Blog
-
+@login_required
 def edit_blog(request,id):
     if request.user.is_authenticated:
         update_b = Blog.objects.get(id=id)
-        category = Category.objects.all()
-        title1 = Title.objects.all()
-
         if request.method =='POST':
             title = request.POST['title']
             category = request.POST['category']
@@ -89,9 +161,10 @@ def edit_blog(request,id):
 
             update_b.save()
             return redirect('profile')
-        return render(request,'update-blog.html',{'update_b':update_b, 'category': category, 'title1':title1})
+        return render(request,'update-blog.html',{'update_b':update_b})
 
 #delete blog
+@login_required
 def delete_blog(request,id):
     if request.user.is_authenticated:
         Blog.objects.filter(id=id).delete()
@@ -100,7 +173,7 @@ def delete_blog(request,id):
         return redirect('login')
 
 # User Profile
-
+@login_required
 def profile(request):
     if request.user.is_authenticated:
         user = request.user
@@ -110,11 +183,10 @@ def profile(request):
         return redirect('login')
 
 # Upload Blog
-
+@login_required
 def upload_blog(request):
     if request.user.is_authenticated:
         category = Category.objects.all()
-        title = Title.objects.all()
         if request.method =='POST':
             title = request.POST['title']
             category = request.POST['category']
@@ -132,7 +204,7 @@ def upload_blog(request):
                 print("Title or Categoty")
             return redirect('index')
 
-        return render(request,'upload-blog.html',{'category':category, 'title':title})
+        return render(request,'upload-blog.html',{'category':category})
     else:
         return redirect('login')
 
@@ -172,39 +244,4 @@ def loginuser(request):
 
 def logoutuser(request):
     logout(request)
-    return redirect('index')
-
-# @login_required(login_url="")
-def replyComment(request,id):
-   comments = Comment.objects.get(id=id)
-
-   if request.method == 'POST':
-       replier_name = request.user
-       reply_content = request.POST.get('reply_content')
-
-       newReply = ReplyComment(replier_name=replier_name, reply_content=reply_content)
-       newReply.reply_comment = comments
-       newReply.save()
-       messages.success(request, 'Comment replied!')
-       return redirect('index')
-
-
-@login_required
-def make_private(request, id):
-    blog = Blog.objects.get(id=id)
-  
-    blog.private = True
-    blog.save()
-    messages.success(request, "Your Blog has been successfully Private.")
-  
-    return redirect('index', id=id)
-
-@login_required
-def make_public(request, pk):
-    blog = Blog.objects.get(id=id)
-
-    blog.private = False
-    blog.save()
-    messages.success(request, "Your Blog has been successfully Public.")
-    
-    return redirect('index', id=id)
+    return redirect('login')

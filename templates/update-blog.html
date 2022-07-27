@@ -15,60 +15,33 @@
                         <div class="row block-large-1-2 block-tab-full s-content__blocks">
                             <h3 style="color: white;">You can Upload your Blog here...</h3>
                         </div> <!-- end s-content__blocks -->
-                        <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-                        <script>
-                            tinymce.init
-                            ({
-                                selector:'#myEditor'
-                            });
-                
-                        </script>
                         <form name="cForm" id="cForm" class="s-content__form" method="post" enctype = "multipart/form-data">
                             
                             {% csrf_token %}
 
                                 <div class="form-field">
-                                    <div class="form-field">
-                                        <label for="category" class="form-label">Title:</label>
-                                        <select class="category">
-                                
-                                          {% for t in title1 %}
-                                              <option value="{{t}}" selected="selected">{{t.title}}</option>
-                                          {% endfor %}
-                                
-                                        </select> 
-                                                                            </div>                         </div>
+                                    <input name="title" type="text" id="title" class="h-full-width h-remove-bottom" placeholder="Your Title" value="{{update_b.title}}">
+                                </div>
 
                                 <div class="form-field">
-                                    <label for="category" class="form-label">Category:</label>
-                                    <select class="category">
-                         
-                                   {% for cat in category %}
-                                       <option value="{{cat}}" selected="selected">{{cat.category}}</option>
-                                   {% endfor %}
-                         
-                                 </select>  
-                                        
-                               </div>
+                                    <input name="category" type="text" id="category" class="h-full-width h-remove-bottom" placeholder="Your Category" value="{{update_b.category}}" >
+                                </div>
 
                                 <div class="form-field">
-                                    <label for="category" class="form-label">EntryText:</label>
                                     <input name="entryTxt" type="text" id="entryTxt" class="h-full-width h-remove-bottom" placeholder="Your Entry Text" value="{{update_b.entryTxt}}" >
                                 </div>
-<br>
+
                                 <div class="message form-field">
-                                    <label for="category" class="form-label">Description:</label>
-                                    <textarea name="Desc" id="myEditor"  class="h-full-width" placeholder="Your Description" rows="15">{{update_b.Desc}}</textarea>
+                                    <textarea name="Desc" id="mytextarea" class="h-full-width" placeholder="Your Description" rows="15">{{update_b.Desc}}</textarea>
                                 </div>
-<br>
+
                                 <div class="form-field">
-                                    <label for="category" class="form-label">Keywords:</label>
                                     <input name="keyword" type="text" id="keyword" class="h-full-width h-remove-bottom" placeholder="Your Keywords" value="{{update_b.keyword}}" >
                                 </div>
                                 <br>
                                 <div class="form-field">
-                                    <label for="category" class="form-label">Image:</label>                                    
-                                    <input name="Uploadimage" type="file" id="Uploadimage"  >{{update_b.image}}
+                                    <label style="color: white;">Choose Your Image</label>
+                                    <input name="Uploadimage" type="file" id="Uploadimage"  >
                                 </div>
 
                                 <br>
