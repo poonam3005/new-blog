@@ -19,7 +19,7 @@ def index(request):
     category = Category.objects.all()
     print(request.user,"loged in")
     return render(request,'index.html',{'bloglist':bloglist,'category':category})
-    
+
 # privet or public
 @login_required
 def private(request,id):
