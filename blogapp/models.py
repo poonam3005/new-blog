@@ -27,7 +27,6 @@ class Blog(models.Model):
     date = models.DateField( auto_now=True)
     likes = models.ManyToManyField(User, related_name='blog_post')
     private = models.BooleanField(default=False, null=True)
-
     def total_likes(self):
         return self.likes.count()
 
